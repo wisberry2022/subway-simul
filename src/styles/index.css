@@ -1,0 +1,14 @@
+root {
+  --color-bg: #121212;
+  --color-surface: #1c1c1e;
+  --color-toolbar: #181818;
+  --color-divider: #2c2c2e;
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #a0a0a0;
+  --color-disabled: #666666;
+  --color-primary: #007aff;
+  --color-secondary: #5ac8fa;
+  --color-success: #34c759;
+  --color-warning: #ff9500;
+  --color-danger: #ff3b30;
+}
