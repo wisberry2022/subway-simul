@@ -2,15 +2,18 @@ import type { FC, MouseEventHandler } from "react";
 import { useGameStore } from "../hooks/useGameStore";
 import { StationMarker } from "./StationMarker";
 import { LinePath } from "./LinePath";
+import { TrainIcon } from "./TrainIcon";
 
 export const MapCanvas: FC = () => {
   const {
-    stations,
-    lines,
     selectedTool,
+    stations,
     addStation,
+    cancelLastStation,
+    lines,
     selectedStationIdsForLine,
-    deleteStation,
+    cancelLastLine,
+    trains,
   } = useGameStore();
 
   const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -25,7 +28,14 @@ export const MapCanvas: FC = () => {
 
   const handleRightClick: MouseEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
-    deleteStation();
+    switch (selectedTool) {
+      case "station":
+        cancelLastStation();
+        break;
+      case "line":
+        cancelLastLine();
+        break;
+    }
   };
 
   return (
@@ -47,12 +57,18 @@ export const MapCanvas: FC = () => {
           key={line.id}
           stationIds={line.stationOrder}
           color={line.color}
+          lineId={line.id}
         />
       ))}
       {/* 생성 중인 노선 */}
       {selectedTool === "line" && selectedStationIdsForLine.length >= 2 && (
         <LinePath stationIds={selectedStationIdsForLine} color="#aaa" />
       )}
+
+      {/* 열차 */}
+      {trains.map((train) => (
+        <TrainIcon key={train.id} train={train} />
+      ))}
 
       {stations.map((station) => (
         <StationMarker key={station.id} station={station} />

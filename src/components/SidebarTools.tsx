@@ -26,6 +26,7 @@ export const SidebarTools: FC = () => {
           <button onClick={clearLineSelection}>초기화</button>
         </>
       )}
+      <button onClick={() => setTool("train")}>열차 배치</button>
     </div>
   );
 };
