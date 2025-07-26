@@ -25,6 +25,7 @@ export type Train = {
   speed: number;
   capacity: number;
   passengers: Passenger[];
+  targetPosition?: Position; // 이동 목표
 };
 
 export type Passenger = {

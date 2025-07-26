@@ -15,7 +15,6 @@ export const TrainIcon: FC<TrainProps> = (props) => {
     width: 20,
     height: 14,
     backgroundColor: "red",
-    // borderRadius: "50%",
     border: "2px solid white",
   };
 

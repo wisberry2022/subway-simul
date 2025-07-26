@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Line, Station, Train } from "../types/basic";
+import type { Line, Position, Station, Train } from "../types/basic";
 import { v4 as uuid } from "uuid";
 
 type GameState = {
@@ -20,6 +20,14 @@ type GameState = {
   // 열차 관련 변수들
   trains: Train[];
   addTrainToLine: (lineId: string) => void;
+
+  updateTrainTarget: (
+    trainId: string,
+    newPosition: Position,
+    newIndex: number,
+    newDirection: "forward" | "backward"
+  ) => void;
+  moveTrains: (deltaTime: number) => void;
 };
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -107,7 +115,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       lineId,
       currentStationIndex: 0,
       direction: "forward",
-      speed: 1.0,
+      // speed: 1.0,
+      speed: 100,
       capacity: 100,
       passengers: [],
       position: { ...startStation.position },
@@ -117,4 +126,55 @@ export const useGameStore = create<GameState>((set, get) => ({
       trains: [...state.trains, newTrain],
     }));
   },
+  updateTrainTarget: (
+    trainId: string,
+    target: Position,
+    nextIndex: number,
+    dir: "forward" | "backward"
+  ) =>
+    set((state) => ({
+      trains: state.trains.map((t) =>
+        t.id === trainId
+          ? {
+              ...t,
+              targetPosition: target,
+              currentStationIndex: nextIndex,
+              direction: dir,
+            }
+          : t
+      ),
+    })),
+  moveTrains: (deltaTime: number) =>
+    set((state) => {
+      const updated = state.trains.map((t) => {
+        if (!t.targetPosition) return t;
+
+        const dx = t.targetPosition.x - t.position.x;
+        const dy = t.targetPosition.y - t.position.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 1) {
+          return {
+            ...t,
+            position: { ...t.targetPosition },
+            targetPosition: undefined,
+          };
+        }
+
+        const moveDist = t.speed * (deltaTime / 1000);
+        const ratio = moveDist / dist;
+        const moveX = dx * ratio;
+        const moveY = dy * ratio;
+
+        return {
+          ...t,
+          position: {
+            x: t.position.x + moveX,
+            y: t.position.y + moveY,
+          },
+        };
+      });
+
+      return { trains: updated };
+    }),
 }));
