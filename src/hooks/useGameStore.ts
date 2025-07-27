@@ -33,6 +33,9 @@ type GameState = {
     passengers: Passenger[];
     stations: Station[];
   };
+  // 시간 관련 변수들
+  gameTimeMinutes: number;
+  advanceGameTime: (minutes: number) => void;
 };
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -203,13 +206,13 @@ export const useGameStore = create<GameState>((set, get) => ({
     const state = get();
     const line = state.lines.find((l) => l.id === train.lineId);
     // console.log("line", line);
-    if (!line) return {passengers: [], stations: []};
+    if (!line) return { passengers: [], stations: [] };
 
     const currentStationId = line.stationOrder[train.currentStationIndex];
     const currentStation = state.stations.find(
       (s) => s.id === currentStationId
     );
-    if (!currentStation) return {passengers: [], stations: []};
+    if (!currentStation) return { passengers: [], stations: [] };
 
     // 하차 처리
     const remainingPassengers = train.passengers.filter(
@@ -250,4 +253,10 @@ export const useGameStore = create<GameState>((set, get) => ({
       ],
     };
   },
+  // 시간 관련 변수들
+  gameTimeMinutes: 360,
+  advanceGameTime: (minutes: number) =>
+    set((state) => ({
+      gameTimeMinutes: state.gameTimeMinutes + minutes,
+    })),
 }));

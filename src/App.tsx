@@ -1,10 +1,12 @@
 import { MapCanvas } from "./components/MapCanvas";
 import { SidebarTools } from "./components/SidebarTools";
+import { TopStatusBar } from "./components/TopStatusBar";
 import { GameProvider } from "./provider/GameProvider";
 
 function App() {
   return (
     <div className="page dark">
+      <TopStatusBar />
       <div>
         <SidebarTools />
       </div>

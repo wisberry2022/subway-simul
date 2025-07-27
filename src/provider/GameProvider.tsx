@@ -11,10 +11,12 @@ export const GameProvider: FC = () => {
     updateTrainTarget,
     moveTrains,
     addPassengerToStation,
+    advanceGameTime,
   } = useGameStore();
 
   const lastTimeRef = useRef(performance.now());
   const passengerTimerRef = useRef(0);
+  const timeAccumulatorRef = useRef(0);
 
   useEffect(() => {
     let animationId: number;
@@ -23,6 +25,13 @@ export const GameProvider: FC = () => {
       const delta = time - lastTimeRef.current;
       lastTimeRef.current = time;
       passengerTimerRef.current += delta;
+      timeAccumulatorRef.current += delta;
+
+      // 1초마다 게임 시간 +1분
+      if (timeAccumulatorRef.current >= 1000) {
+        advanceGameTime(1);
+        timeAccumulatorRef.current = 0;
+      }
 
       moveTrains(delta);
 
