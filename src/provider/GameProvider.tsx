@@ -1,11 +1,20 @@
 import { useEffect, useRef, type FC } from "react";
 import { useGameStore } from "../hooks/useGameStore";
+import type { Passenger } from "../types/basic";
+import { v4 as uuid } from "uuid";
 
 export const GameProvider: FC = () => {
-  const { trains, lines, stations, updateTrainTarget, moveTrains } =
-    useGameStore();
+  const {
+    trains,
+    lines,
+    stations,
+    updateTrainTarget,
+    moveTrains,
+    addPassengerToStation,
+  } = useGameStore();
 
   const lastTimeRef = useRef(performance.now());
+  const passengerTimerRef = useRef(0);
 
   useEffect(() => {
     let animationId: number;
@@ -13,6 +22,7 @@ export const GameProvider: FC = () => {
     const loop = (time: number) => {
       const delta = time - lastTimeRef.current;
       lastTimeRef.current = time;
+      passengerTimerRef.current += delta;
 
       moveTrains(delta);
 
@@ -46,12 +56,40 @@ export const GameProvider: FC = () => {
 
         updateTrainTarget(train.id, targetStation.position, nextIndex, newDir);
       });
+
+      // 승객 생성: 10초 간격
+      if (passengerTimerRef.current > 10000) {
+        stations.forEach((fromStation) => {
+          const otherStations = stations.filter((s) => s.id !== fromStation.id);
+          if (otherStations.length === 0) return;
+
+          const randomDest =
+            otherStations[Math.floor(Math.random() * otherStations.length)];
+
+          const newPassenger: Passenger = {
+            id: uuid(),
+            fromStationId: fromStation.id,
+            destinationStationId: randomDest.id,
+            status: "waiting",
+          };
+
+          addPassengerToStation(fromStation.id, newPassenger);
+        });
+        passengerTimerRef.current = 0;
+      }
       animationId = requestAnimationFrame(loop);
     };
 
     animationId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animationId);
-  }, [trains, lines, stations, updateTrainTarget, moveTrains]);
+  }, [
+    trains,
+    lines,
+    stations,
+    updateTrainTarget,
+    moveTrains,
+    addPassengerToStation,
+  ]);
 
   return null;
 };

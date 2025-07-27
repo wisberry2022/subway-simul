@@ -38,6 +38,8 @@ export const MapCanvas: FC = () => {
     }
   };
 
+  console.log("trains", trains);
+
   return (
     <div
       style={{

@@ -9,7 +9,7 @@ type LinePathProps = {
 
 export const LinePath: FC<LinePathProps> = (props) => {
   const { stationIds, color, lineId = "" } = props;
-  const { stations, selectedTool, addTrainToLine } = useGameStore();
+  const { stations, selectedTool, setTool, addTrainToLine } = useGameStore();
 
   const points = stationIds
     .map((id) => stations.find((s) => s.id === id))
@@ -19,10 +19,12 @@ export const LinePath: FC<LinePathProps> = (props) => {
 
   const handleClick = () => {
     if (selectedTool === "train") {
+      console.log("handleClick", lineId);
       if (lineId) {
         // 기생성된 노선에 대해서만 열차를 배치할 수 있도록 한다
         addTrainToLine(lineId);
       }
+      setTool(null);
     }
   };
 

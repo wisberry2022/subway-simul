@@ -18,5 +18,11 @@ export const TrainIcon: FC<TrainProps> = (props) => {
     border: "2px solid white",
   };
 
-  return <div style={style} title={`Train: ${train.id}`} />;
+  return (
+    <div key={train.id} style={style} title={`Train: ${train.id}`}>
+      <span style={{ position: "absolute", top: -12, left: 16, fontSize: 10 }}>
+        👤{train.passengers.length}
+      </span>
+    </div>
+  );
 };

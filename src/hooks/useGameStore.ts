@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Line, Position, Station, Train } from "../types/basic";
+import type { Line, Passenger, Position, Station, Train } from "../types/basic";
 import { v4 as uuid } from "uuid";
 
 type GameState = {
@@ -20,7 +20,6 @@ type GameState = {
   // 열차 관련 변수들
   trains: Train[];
   addTrainToLine: (lineId: string) => void;
-
   updateTrainTarget: (
     trainId: string,
     newPosition: Position,
@@ -28,6 +27,12 @@ type GameState = {
     newDirection: "forward" | "backward"
   ) => void;
   moveTrains: (deltaTime: number) => void;
+  // 승객 관련 변수들
+  addPassengerToStation: (stationId: string, passenger: Passenger) => void;
+  processBoardingAndUnloading: (train: Train) => {
+    passengers: Passenger[];
+    stations: Station[];
+  };
 };
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -44,6 +49,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           id: uuid(),
           name: `테스트 역사 ${state.stations.length + 1}`,
           position: { x, y },
+          passengerQueue: [],
         },
       ],
     })),
@@ -144,7 +150,8 @@ export const useGameStore = create<GameState>((set, get) => ({
           : t
       ),
     })),
-  moveTrains: (deltaTime: number) =>
+  moveTrains: (deltaTime: number) => {
+    const processBoardingAndUnloading = get().processBoardingAndUnloading;
     set((state) => {
       const updated = state.trains.map((t) => {
         if (!t.targetPosition) return t;
@@ -154,9 +161,12 @@ export const useGameStore = create<GameState>((set, get) => ({
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < 1) {
+          const { passengers, stations } = processBoardingAndUnloading(t);
+          set({ stations });
           return {
             ...t,
             position: { ...t.targetPosition },
+            passengers,
             targetPosition: undefined,
           };
         }
@@ -176,5 +186,68 @@ export const useGameStore = create<GameState>((set, get) => ({
       });
 
       return { trains: updated };
-    }),
+    });
+  },
+  // 승객 관련 state
+  addPassengerToStation: (stationId: string, passenger: Passenger) =>
+    set((state) => ({
+      stations: state.stations.map((s) =>
+        s.id === stationId
+          ? { ...s, passengerQueue: [...(s.passengerQueue || []), passenger] }
+          : s
+      ),
+    })),
+  processBoardingAndUnloading: (
+    train: Train
+  ): { passengers: Passenger[]; stations: Station[] } => {
+    const state = get();
+    const line = state.lines.find((l) => l.id === train.lineId);
+    // console.log("line", line);
+    if (!line) return {passengers: [], stations: []};
+
+    const currentStationId = line.stationOrder[train.currentStationIndex];
+    const currentStation = state.stations.find(
+      (s) => s.id === currentStationId
+    );
+    if (!currentStation) return {passengers: [], stations: []};
+
+    // 하차 처리
+    const remainingPassengers = train.passengers.filter(
+      (p) => p.destinationStationId !== currentStationId
+    );
+    const arrivePassengers = train.passengers.filter(
+      (p) => p.destinationStationId === currentStationId
+    );
+
+    // 탑승 처리
+    const availableSpace = train.capacity - remainingPassengers.length;
+    const candidates = currentStation.passengerQueue.filter((p) =>
+      line.stationOrder.includes(p.destinationStationId)
+    );
+
+    const boarding = candidates.slice(0, availableSpace);
+
+    // 현재 역에서 탑승한 승객을 제외한 나머지 대기열
+    const updatedStations = state.stations.map((s) =>
+      s.id === currentStationId
+        ? {
+            ...s,
+            passengerQueue: s.passengerQueue.filter(
+              (p) => !boarding.some((b) => b.id === p.id)
+            ),
+          }
+        : s
+    );
+
+    return {
+      stations: updatedStations,
+      passengers: [
+        ...remainingPassengers,
+        ...boarding.map((p) => ({
+          ...p,
+          status: "onBoard" as Passenger["status"],
+        })),
+      ],
+    };
+  },
 }));

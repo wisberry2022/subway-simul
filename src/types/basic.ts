@@ -7,6 +7,7 @@ export type Station = {
   id: string;
   name: string;
   position: Position;
+  passengerQueue: Passenger[];
 };
 
 export type Line = {

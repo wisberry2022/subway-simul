@@ -11,6 +11,7 @@ export const StationMarker: FC<StationMarkerProps> = (props) => {
   const { selectedTool, selectStationForLine, selectedStationIdsForLine } =
     useGameStore();
   const isSelected = selectedStationIdsForLine.includes(station.id);
+  const passengerCount = station.passengerQueue?.length || 0;
 
   const style: CSSProperties = {
     position: "absolute",
@@ -29,5 +30,20 @@ export const StationMarker: FC<StationMarkerProps> = (props) => {
     }
   };
 
-  return <div style={style} title={station.name} onClick={handleClick} />;
+  return (
+    <>
+      <div style={style} title={station.name} onClick={handleClick} />
+      <div
+        style={{
+          position: "absolute",
+          top: station.position.y - 20,
+          left: station.position.x + 8,
+          fontSize: 10,
+          color: "#fff",
+        }}
+      >
+        {passengerCount > 0 ? `🧍‍♂️${passengerCount}` : ""}
+      </div>
+    </>
+  );
 };
