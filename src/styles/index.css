@@ -14,5 +14,15 @@ root {
 }
 
 main {
-  position: relative;
+  display: flex;
+
+  .section {
+    position: relative;
+    width: 5%;
+    background-color: #1c1c1e;
+  }
+
+  .mapCanvas {
+    width: 95%;
+  }
 }

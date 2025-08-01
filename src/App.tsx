@@ -9,8 +9,10 @@ function App() {
     <div className="page dark">
       <TopStatusBar />
       <main>
-        <SidebarTools />
-        <div className="flex-1">
+        <div className="section">
+          <SidebarTools />
+        </div>
+        <div className="mapCanvas">
           <MapCanvas />
         </div>
       </main>
