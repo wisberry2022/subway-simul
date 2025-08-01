@@ -1,19 +1,30 @@
 import type { FC } from "react";
-import { useGameStore } from "../hooks/useGameStore";
+import { useGameStore, type GameState } from "../../hooks/useGameStore";
+import "./styles/SidebarTool.css";
+import { MapPinIcon, PathIcon, TrainSimpleIcon } from "@phosphor-icons/react";
 
 export const SidebarTools: FC = () => {
   const {
     selectedTool,
     setTool,
+    clearTool,
     selectedStationIdsForLine,
     confirmLineCreation,
     clearLineSelection,
   } = useGameStore();
 
+  const onToggleTool = (tool: GameState["selectedTool"]) => {
+    if (selectedTool === tool) {
+      clearTool();
+      return;
+    }
+    setTool(tool);
+  };
+
   return (
-    <div>
-      <button onClick={() => setTool("station")}>역 생성</button>
-      <button onClick={() => setTool("line")}>노선 생성</button>
+    <div className="leftBar">
+      <MapPinIcon alt="역 생성" onClick={() => onToggleTool("station")} />
+      <PathIcon alt="노선 생성" onClick={() => onToggleTool("line")} />
       {selectedTool === "line" && (
         <>
           <div>선택된 역 수: {selectedStationIdsForLine.length}</div>
@@ -26,7 +37,7 @@ export const SidebarTools: FC = () => {
           <button onClick={clearLineSelection}>초기화</button>
         </>
       )}
-      <button onClick={() => setTool("train")}>열차 배치</button>
+      <TrainSimpleIcon alt="열차 배치" onClick={() => onToggleTool("train")} />
     </div>
   );
 };

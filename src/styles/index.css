@@ -12,3 +12,7 @@ root {
   --color-warning: #ff9500;
   --color-danger: #ff3b30;
 }
+
+main {
+  position: relative;
+}

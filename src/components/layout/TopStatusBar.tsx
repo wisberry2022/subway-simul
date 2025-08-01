@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { useGameStore } from "../../hooks/useGameStore";
 import { formatGameTime } from "../../utils/formatGameTime";
-import "./TopStatusBar.css";
+import "./styles/TopStatusBar.css";
 
 export const TopStatusBar: FC = () => {
   const gameTimeMinutes = useGameStore((s) => s.gameTimeMinutes);
