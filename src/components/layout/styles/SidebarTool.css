@@ -19,4 +19,27 @@
     height: 2.5rem;
     cursor: pointer;
   }
+
+  .subBar {
+    position: absolute;
+    right: -300%;
+    background-color: #3b3938;
+    border-radius: 1rem;
+    padding: 1rem;
+
+    p {
+      margin-bottom: 1.2rem;
+      font-size: 1.4rem;
+    }
+
+    .svgBox {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      svg {
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+  }
 }

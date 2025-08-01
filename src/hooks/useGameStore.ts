@@ -44,7 +44,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   stations: [],
   selectedTool: null,
   selectedStationIdsForLine: [],
-  setTool: (tool) => set({ selectedTool: tool }),
+  setTool: (tool) => set({ selectedTool: tool, selectedStationIdsForLine: [] }),
   clearTool: () => {
     set({ selectedTool: null });
   },

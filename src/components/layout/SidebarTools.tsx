@@ -1,7 +1,13 @@
 import type { FC } from "react";
 import { useGameStore, type GameState } from "../../hooks/useGameStore";
 import "./styles/SidebarTool.css";
-import { MapPinIcon, PathIcon, TrainSimpleIcon } from "@phosphor-icons/react";
+import {
+  CheckCircleIcon,
+  MapPinIcon,
+  PathIcon,
+  TrainSimpleIcon,
+  XCircleIcon,
+} from "@phosphor-icons/react";
 
 export const SidebarTools: FC = () => {
   const {
@@ -21,21 +27,28 @@ export const SidebarTools: FC = () => {
     setTool(tool);
   };
 
+  const onConfirmLineCreation = () => {
+    if (selectedStationIdsForLine.length < 2) {
+      return;
+    }
+    confirmLineCreation();
+  };
+
   return (
     <div className="leftBar">
       <MapPinIcon alt="역 생성" onClick={() => onToggleTool("station")} />
       <PathIcon alt="노선 생성" onClick={() => onToggleTool("line")} />
       {selectedTool === "line" && (
-        <>
-          <div>선택된 역 수: {selectedStationIdsForLine.length}</div>
-          <button
-            onClick={confirmLineCreation}
-            disabled={selectedStationIdsForLine.length < 2}
-          >
-            노선 제작 완료
-          </button>
-          <button onClick={clearLineSelection}>초기화</button>
-        </>
+        <div className="subBar">
+          <p>선택된 역 수: {selectedStationIdsForLine.length}</p>
+          <div className="svgBox">
+            <CheckCircleIcon
+              alt="노선 제작 완료하기"
+              onClick={onConfirmLineCreation}
+            />
+            <XCircleIcon onClick={clearLineSelection} alt="초기화" />
+          </div>
+        </div>
       )}
       <TrainSimpleIcon alt="열차 배치" onClick={() => onToggleTool("train")} />
     </div>
