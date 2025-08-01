@@ -41,10 +41,10 @@ export const MapCanvas: FC = () => {
   return (
     <div
       style={{
-        width: "100%",
         height: "100vh",
         backgroundColor: "#1c1c1e",
         border: "1px solid #2c2c2e",
+        borderLeft: "none",
         position: "relative",
         cursor: selectedTool === "station" ? "crosshair" : "default",
       }}

@@ -12,3 +12,17 @@ root {
   --color-warning: #ff9500;
   --color-danger: #ff3b30;
 }
+
+main {
+  display: flex;
+
+  .section {
+    position: relative;
+    width: 5%;
+    background-color: #1c1c1e;
+  }
+
+  .mapCanvas {
+    width: 95%;
+  }
+}

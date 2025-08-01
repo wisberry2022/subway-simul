@@ -2,12 +2,13 @@ import { create } from "zustand";
 import type { Line, Passenger, Position, Station, Train } from "../types/basic";
 import { v4 as uuid } from "uuid";
 
-type GameState = {
+export type GameState = {
   // 역 관련 변수들
   stations: Station[];
   selectedTool: "station" | "line" | "train" | null;
   selectedStationIdsForLine: string[];
   setTool: (tool: GameState["selectedTool"]) => void;
+  clearTool: () => void;
   addStation: (x: number, y: number) => void;
   cancelLastStation: () => void;
   // 노선 관련 변수들
@@ -43,7 +44,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   stations: [],
   selectedTool: null,
   selectedStationIdsForLine: [],
-  setTool: (tool) => set({ selectedTool: tool }),
+  setTool: (tool) => set({ selectedTool: tool, selectedStationIdsForLine: [] }),
+  clearTool: () => {
+    set({ selectedTool: null });
+  },
   addStation: (x, y) =>
     set((state) => ({
       stations: [
