@@ -1,6 +1,7 @@
 import type { CSSProperties, FC } from "react";
 import type { Station } from "../types/basic";
 import { useGameStore } from "../hooks/useGameStore";
+import { MapPinIcon } from "@phosphor-icons/react";
 
 type StationMarkerProps = {
   station: Station;
@@ -17,10 +18,9 @@ export const StationMarker: FC<StationMarkerProps> = (props) => {
     position: "absolute",
     top: station.position.y - 6,
     left: station.position.x - 6,
-    width: 12,
-    height: 12,
-    backgroundColor: isSelected ? "blue" : "#5ac8fa",
-    borderRadius: "50%",
+    width: "1.5rem",
+    height: "1.5rem",
+    color: isSelected ? "yellow" : "#5ac8fa",
     cursor: selectedTool === "line" ? "pointer" : "default",
   };
 
@@ -32,7 +32,7 @@ export const StationMarker: FC<StationMarkerProps> = (props) => {
 
   return (
     <>
-      <div style={style} title={station.name} onClick={handleClick} />
+      <MapPinIcon style={style} alt={station.name} onClick={handleClick} />
       <div
         style={{
           position: "absolute",
