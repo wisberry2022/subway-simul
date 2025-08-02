@@ -13,10 +13,10 @@ export const TopStatusBar: FC = () => {
         <h1>SubwaySimulator</h1>
       </div>
       <div className="rightBar">
+        <div className="profit">💰 총 수익: {money.toLocaleString()}원</div>
         <div className="time">
           ⏱ 현재 시각: {formatGameTime(gameTimeMinutes)}
         </div>
-        <div className="profit">💰 총 수익: {money.toLocaleString()}원</div>
       </div>
 
       {/* 향후 수익, 승객 수, 만족도 등도 여기 배치 가능 */}
