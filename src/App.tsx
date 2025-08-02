@@ -1,6 +1,7 @@
 import { MapCanvas } from "./components/MapCanvas";
 import { SidebarTools } from "./components/layout/SidebarTools";
 import { TopStatusBar } from "./components/layout/TopStatusBar";
+import { BottomModal } from "./components/modal/BottomModal";
 import { GameProvider } from "./provider/GameProvider";
 import "./styles/index.css";
 
@@ -18,7 +19,8 @@ function App() {
       </main>
       {/* 시간 흐름 로직 */}
       <GameProvider />
-      
+      {/* 하단 모달 */}
+      <BottomModal />
     </div>
   );
 }

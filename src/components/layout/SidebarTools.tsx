@@ -20,7 +20,7 @@ export const SidebarTools: FC = () => {
     clearLineSelection,
   } = useGameStore();
 
-  const { onOpen } = useGameUIStore();
+  const { state, onOpen, onClose } = useGameUIStore();
 
   const onToggleTool = (tool: GameState["selectedTool"]) => {
     if (selectedTool === tool) {
@@ -31,7 +31,12 @@ export const SidebarTools: FC = () => {
   };
 
   const onOpenTrainConfigModal = () => {
-    onOpen({ mode: "TRAIN", position: "BOTTOM" });
+    if (state.mode) {
+      onClose();
+    } else {
+      onOpen({ mode: "TRAIN", position: "BOTTOM", size: "sm" });
+    }
+    clearTool();
   };
 
   const onConfirmLineCreation = () => {

@@ -7,8 +7,9 @@
 }
 
 .page {
-  outline: 1px solid #000;
+  position: Relative;
   height: 100vh;
+  overflow: hidden;
 }
 
 .dark {
