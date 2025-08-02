@@ -16,7 +16,7 @@ export const StationMarker: FC<StationMarkerProps> = (props) => {
 
   const style: CSSProperties = {
     position: "absolute",
-    top: station.position.y - 6,
+    top: station.position.y - 13,
     left: station.position.x - 6,
     width: "1.5rem",
     height: "1.5rem",

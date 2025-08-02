@@ -32,7 +32,7 @@ export const LinePath: FC<LinePathProps> = (props) => {
       style={{ position: "absolute", width: "100%", height: "100%" }}
       onClick={handleClick}
     >
-      <polyline points={points} stroke={color} strokeWidth={4} fill="none" />
+      <polyline points={points} stroke={color} strokeWidth={2} fill="none" />
     </svg>
   );
 };
