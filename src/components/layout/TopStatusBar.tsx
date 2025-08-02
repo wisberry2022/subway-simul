@@ -5,6 +5,7 @@ import "./styles/TopStatusBar.css";
 
 export const TopStatusBar: FC = () => {
   const gameTimeMinutes = useGameStore((s) => s.gameTimeMinutes);
+  const money = useGameStore((s) => s.money);
 
   return (
     <div className="sideBar">
@@ -12,6 +13,7 @@ export const TopStatusBar: FC = () => {
         <h1>SubwaySimulator</h1>
       </div>
       <div className="rightBar">
+        <div className="profit">💰 총 수익: {money.toLocaleString()}원</div>
         <div className="time">
           ⏱ 현재 시각: {formatGameTime(gameTimeMinutes)}
         </div>

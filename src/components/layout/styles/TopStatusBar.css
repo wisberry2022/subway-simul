@@ -14,7 +14,14 @@
 }
 
 .rightBar {
+  display: flex;
+  gap: 1rem;
   .time {
+    font-size: 1.3rem;
+    font-weight: 500;
+  }
+
+  .profit {
     font-size: 1.3rem;
     font-weight: 500;
   }

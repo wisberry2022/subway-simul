@@ -2,6 +2,8 @@ import { create } from "zustand";
 import type { Line, Passenger, Position, Station, Train } from "../types/basic";
 import { v4 as uuid } from "uuid";
 
+export const MOVE_STEP_PX = 50;
+
 export type GameState = {
   // 역 관련 변수들
   stations: Station[];
@@ -27,16 +29,20 @@ export type GameState = {
     newIndex: number,
     newDirection: "forward" | "backward"
   ) => void;
-  moveTrains: (deltaTime: number) => void;
   // 승객 관련 변수들
   addPassengerToStation: (stationId: string, passenger: Passenger) => void;
   processBoardingAndUnloading: (train: Train) => {
     passengers: Passenger[];
     stations: Station[];
+    money: number;
   };
   // 시간 관련 변수들
   gameTimeMinutes: number;
   advanceGameTime: (minutes: number) => void;
+  // 요금 관련 변수
+  fee: number;
+  money: number;
+  addMoney: (profit: number) => void;
 };
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -157,44 +163,6 @@ export const useGameStore = create<GameState>((set, get) => ({
           : t
       ),
     })),
-  moveTrains: (deltaTime: number) => {
-    const processBoardingAndUnloading = get().processBoardingAndUnloading;
-    set((state) => {
-      const updated = state.trains.map((t) => {
-        if (!t.targetPosition) return t;
-
-        const dx = t.targetPosition.x - t.position.x;
-        const dy = t.targetPosition.y - t.position.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < 1) {
-          const { passengers, stations } = processBoardingAndUnloading(t);
-          set({ stations });
-          return {
-            ...t,
-            position: { ...t.targetPosition },
-            passengers,
-            targetPosition: undefined,
-          };
-        }
-
-        const moveDist = t.speed * (deltaTime / 1000);
-        const ratio = moveDist / dist;
-        const moveX = dx * ratio;
-        const moveY = dy * ratio;
-
-        return {
-          ...t,
-          position: {
-            x: t.position.x + moveX,
-            y: t.position.y + moveY,
-          },
-        };
-      });
-
-      return { trains: updated };
-    });
-  },
   // 승객 관련 state
   addPassengerToStation: (stationId: string, passenger: Passenger) =>
     set((state) => ({
@@ -206,17 +174,18 @@ export const useGameStore = create<GameState>((set, get) => ({
     })),
   processBoardingAndUnloading: (
     train: Train
-  ): { passengers: Passenger[]; stations: Station[] } => {
+  ): { passengers: Passenger[]; stations: Station[]; money: number } => {
     const state = get();
+    let moneyGained = 0;
     const line = state.lines.find((l) => l.id === train.lineId);
-    // console.log("line", line);
-    if (!line) return { passengers: [], stations: [] };
+    if (!line) return { passengers: [], stations: [], money: 0 };
 
-    const currentStationId = line.stationOrder[train.currentStationIndex];
+    const currentStationId =
+      line.stationOrder[train.toStationIndex ?? train.currentStationIndex];
     const currentStation = state.stations.find(
       (s) => s.id === currentStationId
     );
-    if (!currentStation) return { passengers: [], stations: [] };
+    if (!currentStation) return { passengers: [], stations: [], money: 0 };
 
     // 하차 처리
     const remainingPassengers = train.passengers.filter(
@@ -225,6 +194,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     const arrivePassengers = train.passengers.filter(
       (p) => p.destinationStationId === currentStationId
     );
+
+    moneyGained += arrivePassengers.length * state.fee;
 
     // 탑승 처리
     const availableSpace = train.capacity - remainingPassengers.length;
@@ -255,6 +226,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           status: "onBoard" as Passenger["status"],
         })),
       ],
+      money: state.money + moneyGained,
     };
   },
   // 시간 관련 변수들
@@ -263,4 +235,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((state) => ({
       gameTimeMinutes: state.gameTimeMinutes + minutes,
     })),
+  fee: 1000,
+  money: 0,
+  addMoney: (profit: number) => {
+    set((state) => ({ money: state.money + profit }));
+  },
 }));
