@@ -3,6 +3,7 @@ import { useGameStore } from "../hooks/useGameStore";
 import { StationMarker } from "./StationMarker";
 import { LinePath } from "./LinePath";
 import { TrainIcon } from "./TrainIcon";
+import { LinePaths } from "./LinePaths";
 
 export const MapCanvas: FC = () => {
   const {
@@ -38,6 +39,8 @@ export const MapCanvas: FC = () => {
     }
   };
 
+  // console.log("lines", lines);
+
   return (
     <div
       style={{
@@ -52,14 +55,7 @@ export const MapCanvas: FC = () => {
       onContextMenu={handleRightClick}
     >
       {/* 기존 노선 */}
-      {lines.map((line) => (
-        <LinePath
-          key={line.id}
-          stationIds={line.stationOrder}
-          color={line.color}
-          lineId={line.id}
-        />
-      ))}
+      <LinePaths lines={lines} />
       {/* 생성 중인 노선 */}
       {selectedTool === "line" && selectedStationIdsForLine.length >= 2 && (
         <LinePath stationIds={selectedStationIdsForLine} color="#aaa" />
