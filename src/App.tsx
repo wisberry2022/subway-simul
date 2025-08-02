@@ -1,7 +1,6 @@
 import { MapCanvas } from "./components/MapCanvas";
 import { SidebarTools } from "./components/layout/SidebarTools";
 import { TopStatusBar } from "./components/layout/TopStatusBar";
-import { BottomModal } from "./components/modal/BottomModal";
 import { GameProvider } from "./provider/GameProvider";
 import "./styles/index.css";
 

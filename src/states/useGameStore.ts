@@ -22,7 +22,7 @@ export type GameState = {
   cancelLastLine: () => void;
   // 열차 관련 변수들
   trains: Train[];
-  addTrainToLine: (lineId: string) => void;
+  addTrainToLines: (lineIds: string[]) => void;
   updateTrainTarget: (
     trainId: string,
     newPosition: Position,
@@ -144,6 +144,37 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((state) => ({
       trains: [...state.trains, newTrain],
     }));
+  },
+  addTrainToLines: (lineIds: string[]) => {
+    console.log("lineIds", lineIds);
+    const lines = get().lines.filter((ln) => lineIds.includes(ln.id));
+    const stations = get().stations;
+
+    if (!lines || lines.length === 0) return;
+
+    const trains = lines.map((line) => {
+      const lineId = line.id;
+      const startStation = stations.find((s) => s.id === line.stationOrder[0]);
+      if (!startStation) return;
+
+      const newTrain: Train = {
+        id: uuid(),
+        lineId,
+        currentStationIndex: 0,
+        direction: "forward",
+        // speed: 1.0,
+        speed: 100,
+        capacity: 100,
+        passengers: [],
+        position: { ...startStation.position },
+      };
+
+      return newTrain;
+    });
+
+    console.log("trains", trains);
+
+    set((state) => ({ trains: [...state.trains, ...(trains as Train[])] }));
   },
   updateTrainTarget: (
     trainId: string,

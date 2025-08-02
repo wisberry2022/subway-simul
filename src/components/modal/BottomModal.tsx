@@ -1,5 +1,4 @@
 import type { FC, ReactNode } from "react";
-import { useGameUIStore } from "../../states/useGameUIStore";
 import "./BottomModal.css";
 import type { NavPositionType, NavSize } from "../../types/ui";
 
