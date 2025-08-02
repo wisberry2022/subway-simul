@@ -18,6 +18,7 @@ function App() {
       </main>
       {/* 시간 흐름 로직 */}
       <GameProvider />
+      
     </div>
   );
 }

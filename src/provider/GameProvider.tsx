@@ -1,5 +1,5 @@
 import { useEffect, useRef, type FC } from "react";
-import { MOVE_STEP_PX, useGameStore } from "../hooks/useGameStore";
+import { MOVE_STEP_PX, useGameStore } from "../states/useGameStore";
 import type { Passenger } from "../types/basic";
 import { v4 as uuid } from "uuid";
 

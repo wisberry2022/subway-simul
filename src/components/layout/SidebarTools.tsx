@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { useGameStore, type GameState } from "../../hooks/useGameStore";
+import { useGameStore, type GameState } from "../../states/useGameStore";
 import "./styles/SidebarTool.css";
 import {
   CheckCircleIcon,
@@ -8,6 +8,7 @@ import {
   TrainSimpleIcon,
   XCircleIcon,
 } from "@phosphor-icons/react";
+import { useGameUIStore } from "../../states/useGameUIStore";
 
 export const SidebarTools: FC = () => {
   const {
@@ -19,12 +20,18 @@ export const SidebarTools: FC = () => {
     clearLineSelection,
   } = useGameStore();
 
+  const { onOpen } = useGameUIStore();
+
   const onToggleTool = (tool: GameState["selectedTool"]) => {
     if (selectedTool === tool) {
       clearTool();
       return;
     }
     setTool(tool);
+  };
+
+  const onOpenTrainConfigModal = () => {
+    onOpen({ mode: "TRAIN", position: "BOTTOM" });
   };
 
   const onConfirmLineCreation = () => {
@@ -50,7 +57,7 @@ export const SidebarTools: FC = () => {
           </div>
         </div>
       )}
-      <TrainSimpleIcon alt="열차 배치" onClick={() => onToggleTool("train")} />
+      <TrainSimpleIcon alt="열차 배치" onClick={onOpenTrainConfigModal} />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { useGameStore } from "../hooks/useGameStore";
+import { useGameStore } from "../states/useGameStore";
 
 type LinePathProps = {
   stationIds: string[];

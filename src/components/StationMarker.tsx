@@ -1,6 +1,6 @@
 import type { CSSProperties, FC } from "react";
 import type { Station } from "../types/basic";
-import { useGameStore } from "../hooks/useGameStore";
+import { useGameStore } from "../states/useGameStore";
 import { MapPinIcon } from "@phosphor-icons/react";
 
 type StationMarkerProps = {

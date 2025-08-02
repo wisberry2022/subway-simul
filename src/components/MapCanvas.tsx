@@ -1,5 +1,5 @@
 import type { FC, MouseEventHandler } from "react";
-import { useGameStore } from "../hooks/useGameStore";
+import { useGameStore } from "../states/useGameStore";
 import { StationMarker } from "./StationMarker";
 import { LinePath } from "./LinePath";
 import { TrainIcon } from "./TrainIcon";
