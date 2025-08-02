@@ -73,8 +73,8 @@ export const GameProvider: FC = () => {
     advanceGameTime,
   ]);
 
+  // 열차 움직임
   useEffect(() => {
-    // 열차 움직임
     const interval = setInterval(() => {
       useGameStore.setState((state) => {
         const updatedTrains = state.trains.map((train) => {

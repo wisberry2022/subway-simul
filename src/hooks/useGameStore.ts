@@ -220,7 +220,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     const line = state.lines.find((l) => l.id === train.lineId);
     if (!line) return { passengers: [], stations: [], money: 0 };
 
-    const currentStationId = line.stationOrder[train.currentStationIndex];
+    const currentStationId =
+      line.stationOrder[train.toStationIndex ?? train.currentStationIndex];
     const currentStation = state.stations.find(
       (s) => s.id === currentStationId
     );
