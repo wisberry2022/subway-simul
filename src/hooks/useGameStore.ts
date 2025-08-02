@@ -29,7 +29,6 @@ export type GameState = {
     newIndex: number,
     newDirection: "forward" | "backward"
   ) => void;
-  moveTrains: (deltaTime: number) => void;
   // 승객 관련 변수들
   addPassengerToStation: (stationId: string, passenger: Passenger) => void;
   processBoardingAndUnloading: (train: Train) => {
@@ -41,6 +40,7 @@ export type GameState = {
   gameTimeMinutes: number;
   advanceGameTime: (minutes: number) => void;
   // 요금 관련 변수
+  fee: number;
   money: number;
   addMoney: (profit: number) => void;
 };
@@ -163,46 +163,6 @@ export const useGameStore = create<GameState>((set, get) => ({
           : t
       ),
     })),
-  moveTrains: (deltaTime: number) => {
-    const processBoardingAndUnloading = get().processBoardingAndUnloading;
-    set((state) => {
-      const updated = state.trains.map((t) => {
-        if (!t.targetPosition) return t;
-
-        const dx = t.targetPosition.x - t.position.x;
-        const dy = t.targetPosition.y - t.position.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < 1) {
-          const { passengers, stations, money } =
-            processBoardingAndUnloading(t);
-          set({ stations, money });
-          return {
-            ...t,
-            position: { ...t.targetPosition },
-            passengers,
-            targetPosition: undefined,
-          };
-        }
-
-        const moveDist = t.speed * (deltaTime / 1000);
-        const ratio = moveDist / dist;
-
-        const moveX = dx * ratio;
-        const moveY = dy * ratio;
-
-        return {
-          ...t,
-          position: {
-            x: t.position.x + moveX,
-            y: t.position.y + moveY,
-          },
-        };
-      });
-
-      return { trains: updated };
-    });
-  },
   // 승객 관련 state
   addPassengerToStation: (stationId: string, passenger: Passenger) =>
     set((state) => ({
@@ -235,7 +195,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       (p) => p.destinationStationId === currentStationId
     );
 
-    moneyGained += arrivePassengers.length * 100;
+    moneyGained += arrivePassengers.length * state.fee;
 
     // 탑승 처리
     const availableSpace = train.capacity - remainingPassengers.length;
@@ -275,6 +235,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((state) => ({
       gameTimeMinutes: state.gameTimeMinutes + minutes,
     })),
+  fee: 1000,
   money: 0,
   addMoney: (profit: number) => {
     set((state) => ({ money: state.money + profit }));

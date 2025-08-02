@@ -10,7 +10,6 @@ export const GameProvider: FC = () => {
     stations,
 
     updateTrainTarget,
-    moveTrains,
     addPassengerToStation,
     processBoardingAndUnloading,
     advanceGameTime,
@@ -35,24 +34,39 @@ export const GameProvider: FC = () => {
         timeAccumulatorRef.current = 0;
       }
 
-      // 승객 생성: 10초 간격
-      if (passengerTimerRef.current > 10000) {
-        stations.forEach((fromStation) => {
-          const otherStations = stations.filter((s) => s.id !== fromStation.id);
-          if (otherStations.length === 0) return;
+      // 승객 생성: 1초 간격
+      if (passengerTimerRef.current > 5000) {
+        // 열차가 배치된 노선의 station에만 승객들이 생성되도록 함
+        const completedLines = lines.filter((line) =>
+          trains.some((train) => train.lineId === line.id)
+        );
+        completedLines.forEach((line) => {
+          line.stationOrder.forEach((fromStationId) => {
+            const fromStation = stations.find(
+              (stat) => stat.id === fromStationId
+            );
+            if (!fromStation) {
+              return;
+            }
+            const otherStations = stations.filter(
+              (s) => s.id !== fromStation!.id
+            );
+            if (otherStations.length === 0) return;
 
-          const randomDest =
-            otherStations[Math.floor(Math.random() * otherStations.length)];
+            const randomDest =
+              otherStations[Math.floor(Math.random() * otherStations.length)];
 
-          const newPassenger: Passenger = {
-            id: uuid(),
-            fromStationId: fromStation.id,
-            destinationStationId: randomDest.id,
-            status: "waiting",
-          };
+            const newPassenger: Passenger = {
+              id: uuid(),
+              fromStationId: fromStation!.id,
+              destinationStationId: randomDest.id,
+              status: "waiting",
+            };
 
-          addPassengerToStation(fromStation.id, newPassenger);
+            addPassengerToStation(fromStation!.id, newPassenger);
+          });
         });
+
         passengerTimerRef.current = 0;
       }
       animationId = requestAnimationFrame(loop);
@@ -67,7 +81,6 @@ export const GameProvider: FC = () => {
     lines,
     stations,
     updateTrainTarget,
-    moveTrains,
     addPassengerToStation,
     processBoardingAndUnloading,
     advanceGameTime,
