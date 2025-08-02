@@ -1,10 +1,16 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 import { useGameUIStore } from "../../states/useGameUIStore";
 import "./BottomModal.css";
-import type { NavSize } from "../../types/ui";
+import type { NavPositionType, NavSize } from "../../types/ui";
 
-export const BottomModal: FC = () => {
-  const { state } = useGameUIStore();
+type BottomModalProps = {
+  size: NavSize;
+  position: NavPositionType;
+  children: ReactNode;
+};
+
+export const BottomModal: FC<BottomModalProps> = (props) => {
+  const { children, position, size } = props;
 
   const sizeMapper: Record<NavSize, number> = {
     sm: 30,
@@ -14,10 +20,10 @@ export const BottomModal: FC = () => {
 
   return (
     <div
-      style={{ width: `${sizeMapper[state.size as NavSize]}%` }}
-      className={`bottomModal ${state.position ? "open" : ""}`}
+      style={{ width: `${sizeMapper[size]}%` }}
+      className={`bottomModal ${position ? "open" : ""}`}
     >
-      모달2
+      {children}
     </div>
   );
 };

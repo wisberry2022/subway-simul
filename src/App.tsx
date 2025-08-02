@@ -7,7 +7,7 @@ import "./styles/index.css";
 
 function App() {
   return (
-    <div className="page dark">
+    <div className="page dark" id="modalRoot">
       <TopStatusBar />
       <main>
         <div className="section">
@@ -19,8 +19,6 @@ function App() {
       </main>
       {/* 시간 흐름 로직 */}
       <GameProvider />
-      {/* 하단 모달 */}
-      <BottomModal />
     </div>
   );
 }
