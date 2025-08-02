@@ -2,6 +2,8 @@ import { create } from "zustand";
 import type { Line, Passenger, Position, Station, Train } from "../types/basic";
 import { v4 as uuid } from "uuid";
 
+export const MOVE_STEP_PX = 50;
+
 export type GameState = {
   // 역 관련 변수들
   stations: Station[];
@@ -185,6 +187,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
         const moveDist = t.speed * (deltaTime / 1000);
         const ratio = moveDist / dist;
+
         const moveX = dx * ratio;
         const moveY = dy * ratio;
 

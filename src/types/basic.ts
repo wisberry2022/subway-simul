@@ -27,6 +27,9 @@ export type Train = {
   capacity: number;
   passengers: Passenger[];
   targetPosition?: Position; // 이동 목표
+  waitTimer?: number;
+  isMoving?: boolean;
+  toStationIndex?: number;
 };
 
 export type Passenger = {
