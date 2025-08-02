@@ -33,10 +33,14 @@ export type GameState = {
   processBoardingAndUnloading: (train: Train) => {
     passengers: Passenger[];
     stations: Station[];
+    money: number;
   };
   // 시간 관련 변수들
   gameTimeMinutes: number;
   advanceGameTime: (minutes: number) => void;
+  // 요금 관련 변수
+  money: number;
+  addMoney: (profit: number) => void;
 };
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -168,8 +172,9 @@ export const useGameStore = create<GameState>((set, get) => ({
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < 1) {
-          const { passengers, stations } = processBoardingAndUnloading(t);
-          set({ stations });
+          const { passengers, stations, money } =
+            processBoardingAndUnloading(t);
+          set({ stations, money });
           return {
             ...t,
             position: { ...t.targetPosition },
@@ -206,17 +211,17 @@ export const useGameStore = create<GameState>((set, get) => ({
     })),
   processBoardingAndUnloading: (
     train: Train
-  ): { passengers: Passenger[]; stations: Station[] } => {
+  ): { passengers: Passenger[]; stations: Station[]; money: number } => {
     const state = get();
+    let moneyGained = 0;
     const line = state.lines.find((l) => l.id === train.lineId);
-    // console.log("line", line);
-    if (!line) return { passengers: [], stations: [] };
+    if (!line) return { passengers: [], stations: [], money: 0 };
 
     const currentStationId = line.stationOrder[train.currentStationIndex];
     const currentStation = state.stations.find(
       (s) => s.id === currentStationId
     );
-    if (!currentStation) return { passengers: [], stations: [] };
+    if (!currentStation) return { passengers: [], stations: [], money: 0 };
 
     // 하차 처리
     const remainingPassengers = train.passengers.filter(
@@ -225,6 +230,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     const arrivePassengers = train.passengers.filter(
       (p) => p.destinationStationId === currentStationId
     );
+
+    moneyGained += arrivePassengers.length * 100;
 
     // 탑승 처리
     const availableSpace = train.capacity - remainingPassengers.length;
@@ -255,6 +262,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           status: "onBoard" as Passenger["status"],
         })),
       ],
+      money: state.money + moneyGained,
     };
   },
   // 시간 관련 변수들
@@ -263,4 +271,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((state) => ({
       gameTimeMinutes: state.gameTimeMinutes + minutes,
     })),
+  money: 0,
+  addMoney: (profit: number) => {
+    set((state) => ({ money: state.money + profit }));
+  },
 }));
