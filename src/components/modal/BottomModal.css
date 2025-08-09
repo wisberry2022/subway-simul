@@ -2,17 +2,23 @@
   position: absolute;
   background-color: #111;
   padding: 1.5rem;
-  /* border-top-left-radius: 5rem; */
-  /* border-top-right-radius: 5rem; */
+
   left: 50%;
   transform: translateX(-50%);
   bottom: -100%;
   z-index: 9999;
   transition: bottom 0.6s;
   height: 15rem;
-  
+
   &.open {
     transition: bottom 0.6s;
     bottom: 0%;
+  }
+
+  .title {
+    margin-bottom: 0.5rem;
+    h3 {
+      font-size: 1.2rem;
+    }
   }
 }

@@ -81,6 +81,7 @@ export const SidebarTools: FC = () => {
           </div>
         )}
       </div>
+      {/* 열차 배치 모달 */}
       <LineAssignModal />
     </>
   );
