@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { useGameStore } from "../../states/useGameStore";
 import "./LineAssignModal.css";
 import { CheckCircleIcon, XCircleIcon } from "@phosphor-icons/react";
+import { TrainControlModal } from "./TrainControlModal";
 
 export const LineAssignModal: FC = () => {
   const { state, onClose } = useGameUIStore();
@@ -78,19 +79,7 @@ export const LineAssignModal: FC = () => {
             <XCircleIcon onClick={onCloseModal} alt="취소" />
           </div>
         </div>
-        {selected && (
-          <div className="trainControlModal">
-            <div id="modalTitle">
-              <h3>열차 컨트롤 모달</h3>
-              <XCircleIcon alt="취소" />
-            </div>
-            <div id="content">
-              <div>
-                <span>열차 배차하기</span>
-              </div>
-            </div>
-          </div>
-        )}
+        {selected && <TrainControlModal lines={lines} />}
       </>
     </BottomModal>,
     modalRoot

@@ -1,0 +1,65 @@
+.trainControlModal {
+  position: absolute;
+  top: -200%;
+  left: -1%;
+  padding: 3rem;
+  width: 100%;
+  background-color: #111;
+
+  #modalTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.1rem solid #333;
+
+    h3 {
+      font-size: 1.2rem;
+    }
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  #content {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3rem;
+
+    .setRow {
+      display: flex;
+      justify-content: space-between;
+
+      .iconSet {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+
+        svg {
+          width: 1rem;
+          height: 1rem;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  #footer {
+    display: flex;
+    justify-self: flex-end;
+
+    .btnBox {
+      display: flex;
+      gap: 0.5rem;
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+        cursor: pointer;
+      }
+    }
+  }
+}
