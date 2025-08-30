@@ -4,121 +4,123 @@ import { BottomHeader } from "./BottomHeader";
 import { MapView } from "./MapView";
 import { NotificationPanel } from "./NotificationPanel";
 import type { GameNotification } from "./NotificationPanel";
-import { useGameStoreV2, useMetaDataStore, type metaData } from "../states/useMetaDataStore";
+import { useMetaDataStore } from "../states/useMetaDataStore";
+import { useGameStoreV2 } from "../states/useGameStoreV2";
 
 export function SubwaySimulator() {
   // 샘플 노선 데이터 (다크 테마 색상 적용)
-  const [lines, setLines] = useState([
-    {
-      id: "line1",
-      name: "1호선",
-      color: "#ff2d55",
-      stations: [
-        {
-          id: "s1",
-          name: "중앙역",
-          x: 200,
-          y: 200,
-          lineColor: "#ff2d55",
-          passengerCount: 45,
-        },
-        {
-          id: "s2",
-          name: "시청역",
-          x: 300,
-          y: 200,
-          lineColor: "#ff2d55",
-          passengerCount: 23,
-        },
-        {
-          id: "s3",
-          name: "대학로역",
-          x: 400,
-          y: 200,
-          lineColor: "#ff2d55",
-          passengerCount: 67,
-        },
-        {
-          id: "s4",
-          name: "강변역",
-          x: 500,
-          y: 200,
-          lineColor: "#ff2d55",
-          passengerCount: 31,
-        },
-      ],
-    },
-    {
-      id: "line2",
-      name: "2호선",
-      color: "#ffcc00",
-      stations: [
-        {
-          id: "s5",
-          name: "신촌역",
-          x: 200,
-          y: 150,
-          lineColor: "#ffcc00",
-          passengerCount: 89,
-        },
-        {
-          id: "s6",
-          name: "홍대입구역",
-          x: 300,
-          y: 150,
-          lineColor: "#ffcc00",
-          passengerCount: 156,
-        },
-        {
-          id: "s7",
-          name: "합정역",
-          x: 400,
-          y: 150,
-          lineColor: "#ffcc00",
-          passengerCount: 44,
-        },
-        {
-          id: "s8",
-          name: "당산역",
-          x: 500,
-          y: 150,
-          lineColor: "#ffcc00",
-          passengerCount: 72,
-        },
-      ],
-    },
-    {
-      id: "line3",
-      name: "3호선",
-      color: "#5ac8fa",
-      stations: [
-        {
-          id: "s9",
-          name: "교대역",
-          x: 300,
-          y: 100,
-          lineColor: "#5ac8fa",
-          passengerCount: 28,
-        },
-        {
-          id: "s10",
-          name: "남부터미널역",
-          x: 300,
-          y: 200,
-          lineColor: "#5ac8fa",
-          passengerCount: 91,
-        },
-        {
-          id: "s11",
-          name: "양재역",
-          x: 300,
-          y: 300,
-          lineColor: "#5ac8fa",
-          passengerCount: 55,
-        },
-      ],
-    },
-  ]);
+  // const [lines, setLines] = useState([
+  //   {
+  //     id: "line1",
+  //     name: "1호선",
+  //     color: "#ff2d55",
+  //     stations: [
+  //       {
+  //         id: "s1",
+  //         name: "중앙역",
+  //         x: 200,
+  //         y: 200,
+  //         lineColor: "#ff2d55",
+  //         passengerCount: 45,
+  //       },
+  //       {
+  //         id: "s2",
+  //         name: "시청역",
+  //         x: 300,
+  //         y: 200,
+  //         lineColor: "#ff2d55",
+  //         passengerCount: 23,
+  //       },
+  //       {
+  //         id: "s3",
+  //         name: "대학로역",
+  //         x: 400,
+  //         y: 200,
+  //         lineColor: "#ff2d55",
+  //         passengerCount: 67,
+  //       },
+  //       {
+  //         id: "s4",
+  //         name: "강변역",
+  //         x: 500,
+  //         y: 200,
+  //         lineColor: "#ff2d55",
+  //         passengerCount: 31,
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: "line2",
+  //     name: "2호선",
+  //     color: "#ffcc00",
+  //     stations: [
+  //       {
+  //         id: "s5",
+  //         name: "신촌역",
+  //         x: 200,
+  //         y: 150,
+  //         lineColor: "#ffcc00",
+  //         passengerCount: 89,
+  //       },
+  //       {
+  //         id: "s6",
+  //         name: "홍대입구역",
+  //         x: 300,
+  //         y: 150,
+  //         lineColor: "#ffcc00",
+  //         passengerCount: 156,
+  //       },
+  //       {
+  //         id: "s7",
+  //         name: "합정역",
+  //         x: 400,
+  //         y: 150,
+  //         lineColor: "#ffcc00",
+  //         passengerCount: 44,
+  //       },
+  //       {
+  //         id: "s8",
+  //         name: "당산역",
+  //         x: 500,
+  //         y: 150,
+  //         lineColor: "#ffcc00",
+  //         passengerCount: 72,
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: "line3",
+  //     name: "3호선",
+  //     color: "#5ac8fa",
+  //     stations: [
+  //       {
+  //         id: "s9",
+  //         name: "교대역",
+  //         x: 300,
+  //         y: 100,
+  //         lineColor: "#5ac8fa",
+  //         passengerCount: 28,
+  //       },
+  //       {
+  //         id: "s10",
+  //         name: "남부터미널역",
+  //         x: 300,
+  //         y: 200,
+  //         lineColor: "#5ac8fa",
+  //         passengerCount: 91,
+  //       },
+  //       {
+  //         id: "s11",
+  //         name: "양재역",
+  //         x: 300,
+  //         y: 300,
+  //         lineColor: "#5ac8fa",
+  //         passengerCount: 55,
+  //       },
+  //     ],
+  //   },
+  // ]);
+  const { lines, setLines } = useGameStoreV2();
   const { setMetaDataState, ...metaData } = useMetaDataStore();
 
   // 게임 시간 업데이트

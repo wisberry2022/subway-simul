@@ -14,7 +14,7 @@ export type Line = {
   id: string;
   name: string;
   color: string;
-  stationOrder: string[];
+  stationOrder?: string[];
 };
 
 export type Train = {

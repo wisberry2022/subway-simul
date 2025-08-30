@@ -16,7 +16,7 @@ export interface MetaDataState {
   setMetaDataState: (prev: SetStateAction<MetaDataState>) => void;
 }
 
-export const useMetaDataStore = create<MetaDataState>((set, get) => ({
+export const useMetaDataStore = create<MetaDataState>((set) => ({
   revenue: 1250000,
   satisfaction: 85,
   passengerCount: 15423,
