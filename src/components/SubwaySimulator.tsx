@@ -4,19 +4,7 @@ import { BottomHeader } from "./BottomHeader";
 import { MapView } from "./MapView";
 import { NotificationPanel } from "./NotificationPanel";
 import type { GameNotification } from "./NotificationPanel";
-
-// 게임 상태 인터페이스
-interface GameState {
-  revenue: number;
-  satisfaction: number;
-  passengerCount: number;
-  gameTime: string;
-  isPaused: boolean;
-  gameSpeed: number;
-  notifications: GameNotification[];
-  isDarkMode: boolean;
-  selectedLine: any | null;
-}
+import { useGameStoreV2, useMetaDataStore, type metaData } from "../states/useMetaDataStore";
 
 export function SubwaySimulator() {
   // 샘플 노선 데이터 (다크 테마 색상 적용)
@@ -131,41 +119,14 @@ export function SubwaySimulator() {
       ],
     },
   ]);
-  const [gameState, setGameState] = useState<GameState>({
-    revenue: 1250000,
-    satisfaction: 85,
-    passengerCount: 15423,
-    gameTime: "09:15",
-    isPaused: false,
-    gameSpeed: 1,
-    isDarkMode: true,
-    selectedLine: null,
-    notifications: [
-      {
-        id: "1",
-        type: "info",
-        title: "게임 시작",
-        message: "지하철 시뮬레이션이 시작되었습니다!",
-        timestamp: "09:00",
-        isRead: false,
-      },
-      {
-        id: "2",
-        type: "warning",
-        title: "지연 발생",
-        message: "1호선에서 신호 장애로 인한 지연이 발생했습니다.",
-        timestamp: "09:10",
-        isRead: false,
-      },
-    ],
-  });
+  const { setMetaDataState, ...metaData } = useMetaDataStore();
 
   // 게임 시간 업데이트
   useEffect(() => {
-    if (gameState.isPaused) return;
+    if (metaData.isPaused) return;
 
     const interval = setInterval(() => {
-      setGameState((prev) => {
+      setMetaDataState((prev) => {
         const currentTime = prev.gameTime;
         const [hours, minutes] = currentTime.split(":").map(Number);
         let newMinutes = minutes + prev.gameSpeed;
@@ -198,11 +159,11 @@ export function SubwaySimulator() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [gameState.isPaused, gameState.gameSpeed]);
+  }, [metaData.isPaused, metaData.gameSpeed]);
 
   // 랜덤 이벤트 생성
   useEffect(() => {
-    if (gameState.isPaused) return;
+    if (metaData.isPaused) return;
 
     const eventInterval = setInterval(() => {
       if (Math.random() < 0.1) {
@@ -236,11 +197,11 @@ export function SubwaySimulator() {
           type: randomEvent.type,
           title: randomEvent.title,
           message: randomEvent.message,
-          timestamp: gameState.gameTime,
+          timestamp: metaData.gameTime,
           isRead: false,
         };
 
-        setGameState((prev) => ({
+        setMetaDataState((prev) => ({
           ...prev,
           notifications: [newNotification, ...prev.notifications].slice(0, 10), // 최대 10개 유지
         }));
@@ -248,14 +209,14 @@ export function SubwaySimulator() {
     }, 5000); // 5초마다 체크
 
     return () => clearInterval(eventInterval);
-  }, [gameState.isPaused, gameState.gameTime]);
+  }, [metaData.isPaused, metaData.gameTime]);
 
   const handlePauseToggle = useCallback(() => {
-    setGameState((prev) => ({ ...prev, isPaused: !prev.isPaused }));
+    setMetaDataState((prev) => ({ ...prev, isPaused: !prev.isPaused }));
   }, []);
 
   const handleSpeedChange = useCallback((speed: number) => {
-    setGameState((prev) => ({ ...prev, gameSpeed: speed }));
+    setMetaDataState((prev) => ({ ...prev, gameSpeed: speed }));
   }, []);
 
   const handleStationClick = useCallback(
@@ -265,20 +226,20 @@ export function SubwaySimulator() {
         type: "info",
         title: `${station.name} 선택`,
         message: `${station.name}역을 선택했습니다. 현재 승객 수: ${station.passengerCount}명`,
-        timestamp: gameState.gameTime,
+        timestamp: metaData.gameTime,
         isRead: false,
       };
 
-      setGameState((prev) => ({
+      setMetaDataState((prev) => ({
         ...prev,
         notifications: [newNotification, ...prev.notifications],
       }));
     },
-    [gameState.gameTime]
+    [metaData.gameTime]
   );
 
   const handleNotificationRead = useCallback((id: string) => {
-    setGameState((prev) => ({
+    setMetaDataState((prev) => ({
       ...prev,
       notifications: prev.notifications.map((n) =>
         n.id === id ? { ...n, isRead: true } : n
@@ -287,36 +248,36 @@ export function SubwaySimulator() {
   }, []);
 
   const handleNotificationRemove = useCallback((id: string) => {
-    setGameState((prev) => ({
+    setMetaDataState((prev) => ({
       ...prev,
       notifications: prev.notifications.filter((n) => n.id !== id),
     }));
   }, []);
 
   const handleClearAllNotifications = useCallback(() => {
-    setGameState((prev) => ({
+    setMetaDataState((prev) => ({
       ...prev,
       notifications: [],
     }));
   }, []);
 
   const handleThemeToggle = useCallback(() => {
-    setGameState((prev) => ({
+    setMetaDataState((prev) => ({
       ...prev,
       isDarkMode: !prev.isDarkMode,
     }));
 
     // DOM 클래스 토글
-    if (gameState.isDarkMode) {
+    if (metaData.isDarkMode) {
       document.documentElement.classList.remove("dark");
     } else {
       document.documentElement.classList.add("dark");
     }
-  }, [gameState.isDarkMode]);
+  }, [metaData.isDarkMode]);
 
   // 노선 관리 핸들러들
   const handleLineSelect = useCallback((line: any) => {
-    setGameState((prev) => ({ ...prev, selectedLine: line }));
+    setMetaDataState((prev) => ({ ...prev, selectedLine: line }));
   }, []);
 
   const handleLineCreate = useCallback(() => {
@@ -328,12 +289,12 @@ export function SubwaySimulator() {
     };
 
     setLines((prev) => [...prev, newLine]);
-    setGameState((prev) => ({ ...prev, selectedLine: newLine }));
+    setMetaDataState((prev) => ({ ...prev, selectedLine: newLine }));
   }, [lines.length]);
 
   const handleLineDelete = useCallback((lineId: string) => {
     setLines((prev) => prev.filter((line) => line.id !== lineId));
-    setGameState((prev) => ({
+    setMetaDataState((prev) => ({
       ...prev,
       selectedLine: prev.selectedLine?.id === lineId ? null : prev.selectedLine,
     }));
@@ -343,7 +304,7 @@ export function SubwaySimulator() {
     setLines((prev) =>
       prev.map((line) => (line.id === lineId ? { ...line, ...updates } : line))
     );
-    setGameState((prev) => ({
+    setMetaDataState((prev) => ({
       ...prev,
       selectedLine:
         prev.selectedLine?.id === lineId
@@ -357,14 +318,14 @@ export function SubwaySimulator() {
       {/* 상단 헤더 */}
       <TopHeader
         stats={{
-          revenue: gameState.revenue,
-          satisfaction: gameState.satisfaction,
-          passengerCount: gameState.passengerCount,
-          gameTime: gameState.gameTime,
+          revenue: metaData.revenue,
+          satisfaction: metaData.satisfaction,
+          passengerCount: metaData.passengerCount,
+          gameTime: metaData.gameTime,
         }}
-        isPaused={gameState.isPaused}
-        gameSpeed={gameState.gameSpeed}
-        isDarkMode={gameState.isDarkMode}
+        isPaused={metaData.isPaused}
+        gameSpeed={metaData.gameSpeed}
+        isDarkMode={metaData.isDarkMode}
         onPauseToggle={handlePauseToggle}
         onSpeedChange={handleSpeedChange}
         onThemeToggle={handleThemeToggle}
@@ -373,7 +334,7 @@ export function SubwaySimulator() {
       {/* 하단 헤더 */}
       <BottomHeader
         lines={lines}
-        selectedLine={gameState.selectedLine}
+        selectedLine={metaData.selectedLine}
         onLineSelect={handleLineSelect}
         onLineCreate={handleLineCreate}
         onLineDelete={handleLineDelete}
@@ -385,7 +346,7 @@ export function SubwaySimulator() {
 
       {/* 하단 알림 패널 */}
       <NotificationPanel
-        notifications={gameState.notifications}
+        notifications={metaData.notifications}
         onNotificationRead={handleNotificationRead}
         onNotificationRemove={handleNotificationRemove}
         onClearAll={handleClearAllNotifications}
