@@ -10,7 +10,7 @@ import { TrainControlModal } from "./TrainControlModal";
 
 export const LineAssignModal: FC = () => {
   const { state, onClose } = useGameUIStore();
-  const { lines, addTrainToLines, clearTool } = useGameStore();
+  const { lines, trains, addTrainToLines, clearTool } = useGameStore();
   const modalRoot = document.getElementById("modalRoot");
   const [selected, setSelected] = useState<string>("");
 
@@ -29,6 +29,11 @@ export const LineAssignModal: FC = () => {
     cleanUp();
   };
 
+  // 열차 컨트롤 모달 종료 함수
+  const onCloseTrainControlModal = () => {
+    setSelected("");
+  };
+
   // 노선 선택 클릭 함수
   const onClick = (lineId: string) => {
     if (selected === lineId) {
@@ -42,6 +47,13 @@ export const LineAssignModal: FC = () => {
   const onConfirm = () => {
     // addTrainToLines(selected);
     onCloseModal();
+  };
+
+  const onConfirmAssignTrain = (quantity: number) => {
+    for (let i = 0; i <= quantity; i++) {
+      addTrainToLines([selected]);
+    }
+    onCloseTrainControlModal();
   };
 
   return createPortal(
@@ -79,7 +91,14 @@ export const LineAssignModal: FC = () => {
             <XCircleIcon onClick={onCloseModal} alt="취소" />
           </div>
         </div>
-        {selected && <TrainControlModal lines={lines} />}
+        {selected && (
+          <TrainControlModal
+            open={!!selected}
+            trains={trains.filter((train) => train.lineId === selected)}
+            onClose={onCloseTrainControlModal}
+            onConfirm={onConfirmAssignTrain}
+          />
+        )}
       </>
     </BottomModal>,
     modalRoot
