@@ -7,7 +7,7 @@ export const MOVE_STEP_PX = 50;
 export type GameState = {
   // 역 관련 변수들
   stations: Station[];
-  selectedTool: "station" | "line" | "train" | null;
+  selectedTool: "station" | "line" | "train" | "train-delete" | null;
   selectedStationIdsForLine: string[];
   setTool: (tool: GameState["selectedTool"]) => void;
   clearTool: () => void;
@@ -22,13 +22,14 @@ export type GameState = {
   cancelLastLine: () => void;
   // 열차 관련 변수들
   trains: Train[];
-  addTrainToLine: (lineId: string) => void;
+  addTrainToLines: (lineIds: string[]) => void;
   updateTrainTarget: (
     trainId: string,
     newPosition: Position,
     newIndex: number,
     newDirection: "forward" | "backward"
   ) => void;
+  deleteTrain: (trainIds: string[]) => void;
   // 승객 관련 변수들
   addPassengerToStation: (stationId: string, passenger: Passenger) => void;
   processBoardingAndUnloading: (train: Train) => {
@@ -120,30 +121,33 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
   // 열차 관련 state
   trains: [],
-  addTrainToLine: (lineId: string) => {
-    const line = get().lines.find((ln) => ln.id === lineId);
+  addTrainToLines: (lineIds: string[]) => {
+    const lines = get().lines.filter((ln) => lineIds.includes(ln.id));
     const stations = get().stations;
 
-    if (!line || line.stationOrder.length === 0) return;
+    if (!lines || lines.length === 0) return;
 
-    const startStation = stations.find((s) => s.id === line.stationOrder[0]);
-    if (!startStation) return;
+    const trains = lines.map((line) => {
+      const lineId = line.id;
+      const startStation = stations.find((s) => s.id === line.stationOrder[0]);
+      if (!startStation) return;
 
-    const newTrain: Train = {
-      id: uuid(),
-      lineId,
-      currentStationIndex: 0,
-      direction: "forward",
-      // speed: 1.0,
-      speed: 100,
-      capacity: 100,
-      passengers: [],
-      position: { ...startStation.position },
-    };
+      const newTrain: Train = {
+        id: uuid(),
+        lineId,
+        currentStationIndex: 0,
+        direction: "forward",
+        // speed: 1.0,
+        speed: 100,
+        capacity: 100,
+        passengers: [],
+        position: { ...startStation.position },
+      };
 
-    set((state) => ({
-      trains: [...state.trains, newTrain],
-    }));
+      return newTrain;
+    });
+
+    set((state) => ({ trains: [...state.trains, ...(trains as Train[])] }));
   },
   updateTrainTarget: (
     trainId: string,
@@ -163,6 +167,11 @@ export const useGameStore = create<GameState>((set, get) => ({
           : t
       ),
     })),
+  deleteTrain: (trainIds: string[]) => {
+    set((state) => ({
+      trains: state.trains.filter((train) => !trainIds.includes(train.id)),
+    }));
+  },
   // 승객 관련 state
   addPassengerToStation: (stationId: string, passenger: Passenger) =>
     set((state) => ({
